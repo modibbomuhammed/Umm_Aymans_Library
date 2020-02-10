@@ -1,0 +1,55 @@
+<%- include('partials/header') %>
+
+
+<div class="container">
+	<div class="row">
+			<div class="col-md-8">
+				<h4 class="my-4">
+					Add a new Post
+				</h4>
+				
+				<form action="/blogs" method="POST" enctype="multipart/form-data">
+					<div class="form-group">
+							<label for="title">
+								Title:
+							</label>
+							<input id="title" type="text" name="post[title]" class="form-control">
+					</div>
+					
+					<div class="form-group">
+					<label for="content">
+						Content:
+					</label>
+					<textarea id="content" name="post[content]" row="3" class="form-control">
+					
+					</textarea>
+					</div>
+					
+					<div class="form-group">
+					<label for="image">
+						Image http:
+					</label>
+					
+					<input type="text" id="image" name="post[image]" class="form-control">
+					
+					</div>
+					
+					<div class="form-group">
+						<% typeof msg != 'undefined' ? msg: ''%>
+    					<label for="exampleFormControlFile1">Upload Image</label>
+    					<input type="file" class="form-control-file" id="exampleFormControlFile1" name="post[image]">
+  					</div>
+					
+					<input type="submit">
+				</form>
+			</div>
+	
+	</div>
+	
+</div>
+
+
+
+
+
+<%- include('partials/footer') %>
