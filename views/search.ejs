@@ -1,0 +1,11 @@
+<%- include('partials/header') %>
+
+<ul>
+	<% books.forEach(book => { %>
+		<li><%= book.title %> by <%= book.author_name %></li>
+	<% }) %>
+	
+</ul>
+
+
+<%- include('partials/footer') %>

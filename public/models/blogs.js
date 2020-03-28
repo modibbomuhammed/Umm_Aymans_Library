@@ -1,7 +1,7 @@
 const mongoose 	= require('mongoose');
 	
 
-let blogScheme = new mongoose.Schema({
+let blogSchema = new mongoose.Schema({
 	title: String,
 	content: String,
 	image: String,
@@ -11,16 +11,15 @@ let blogScheme = new mongoose.Schema({
 	}],
 	date: {type: Date, default: Date.now},
 	author:{
-		id:{
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "User"
-		// default: "Aisha_Mai"
-		},
-		username: String
+			id:{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "User"
+			},
+			username: String,
 	}
 })
 
 
-module.exports = new mongoose.model("Blog", blogScheme);
+module.exports = mongoose.model("Blog", blogSchema);
 
 

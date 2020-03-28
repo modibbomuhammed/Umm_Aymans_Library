@@ -13,40 +13,69 @@
 
       <!-- Blog Entries Column -->
       <div class="col-md-8">
-
-        <h1 class="my-4">Page Heading
-          <small>Secondary Text</small>
+		
+        <h1 class="my-4">Welcome to Umm Ayman's Blog <br/>
+          <small>Let's indulge in the written words</small>
+			<% if(currentUser && currentUser.isAdmin){ %>
+			<br />
 			<a href="/blogs/new" class="btn btn-primary btn-sm">
 				CREATE NEW POST
 			</a>
+			<% } %>
         </h1>
 
         <!-- Blog Post -->
-		  <% blogs.forEach((blog)=> { %>
+		  <% blogs.docs.forEach((blog)=> { %>
 	
         <div class="card mb-4">
-          <img class="card-img-top" src="<%= blog.image %>" alt="Card image cap">
+          <img class="card-img-top" src="<%= blog.image.url %>" alt="Card image cap">
           <div class="card-body">
             <h2 class="card-title"><%= blog.title %></h2>
             <p class="card-text"><%= blog.content %></p>
             <a href="/blogs/<%= blog._id %>" class="btn btn-primary">Read More &rarr;</a>
           </div>
           <div class="card-footer text-muted">
-            Posted on <%= blog.date %> by
-            <a href="#">User</a>
+            Posted on <%= blog.date.toDateString() %> by
+			  <% if(blog.author) { %>
+            <a href="#"><%= blog.author.username %></a>
+			  <% } %>
           </div>
         </div>
 
 		 <% }) %>
-
+		
         <!-- Pagination -->
         <ul class="pagination justify-content-center mb-4">
-          <li class="page-item">
-            <a class="page-link" href="#">&larr; Older</a>
-          </li>
-          <li class="page-item disabled">
-            <a class="page-link" href="#">Newer &rarr;</a>
-          </li>
+			<% if(blogs.page === 1){ %>
+				
+			<li class="page-item disabled">
+				<a class="page-link" href="#">&larr; Newer</a>
+			  </li>
+			  <li class="page-item">
+				<a class='page-link' href='<%= paginateUrl %><%= blogs.page + 1 %>'>Older &rarr;</a>
+            </li>
+			
+			<% } else if(blogs.page > 1 && blogs.page < blogs.pages) { %>
+				
+				<li class="page-item">
+					<a class="page-link" href="<%= paginateUrl %><%= blogs.page - 1 %>">&larr; Newer</a>
+				  </li>
+				  <li class="page-item ">
+					<a class="page-link" href="<%= paginateUrl %><%= blogs.page + 1 %>">Older &rarr;</a>
+          		</li>
+			
+			
+			<% }  else { %>
+				
+					<li class="page-item">
+						<a class="page-link" href="<%= paginateUrl %><%= blogs.page - 1 %>">&larr; Newer</a>
+					  </li>
+					  <li class="page-item disabled">
+						<a class="page-link" href="#">Older &rarr;</a>
+          			</li>	
+			
+			<% } %>
+          
         </ul>
 
       </div>
@@ -61,12 +90,14 @@
         <div class="card my-4">
           <h5 class="card-header">Search</h5>
           <div class="card-body">
-            <div class="input-group">
-              <input type="text" class="form-control" placeholder="Search for...">
+            	<form action='/blogs' method='GET'>
+			  <div class="input-group">
+              <input type="text" class="form-control" name='search' placeholder="Search for...">
               <span class="input-group-btn">
-                <button class="btn btn-secondary" type="button">Go!</button>
-              </span>
+                <button class="btn btn-secondary">Go!</button>
+              </span>	
             </div>
+				</form>
           </div>
         </div>
 

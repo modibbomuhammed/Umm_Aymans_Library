@@ -5,28 +5,28 @@
 	<div class="row">
 			<div class="col-md-8">
 				<h4 class="my-4">
-					Add a new Post
+					Edit Post
 				</h4>
 				<%= typeof msg != "undefined" ? msg: '' %>
 
-				<form action="/blogs" method="POST" enctype="multipart/form-data">
+				<form action="/blogs/<%= blog.id %>?_method=PUT" method="POST" enctype="multipart/form-data">
 					<div class="form-group">
 							<label for="title">
 								Title:
 							</label>
-							<input id="title" type="text" name="blog[title]" class="form-control">
+							<input id="title" type="text" name="blog[title]" class="form-control" value='<%= blog.title %>'>
 					</div>
 					
 					<div class="form-group">
 					<label for="content">
 						Content:
 					</label>
-					<textarea id="content" name="blog[content]" row="3" class="form-control"></textarea>
+					<textarea id="content" name="blog[content]" row="3" class="form-control"><%= blog.content %></textarea>
 					</div>
 					
 					<div class="form-group">
     					<label for="uploadimage">Upload Image</label>
-    					<input type="file" class="form-control-file" id="uploadimage" name="image" accept="image/*" required>
+    					<input type="file" class="form-control-file" id="uploadimage" name="image" accept="image/*">
   					</div>
 					
 					<div class="form-group">
