@@ -4,7 +4,8 @@
   "description": "Library/Bookclub",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
   "keywords": [
     "Bookclub",
@@ -22,7 +23,7 @@
     "express-session": "^1.17.0",
     "method-override": "^3.0.0",
     "mongoose": "^5.8.11",
-    "mongoose-paginate": "^5.0.3",
+    "mongoose-paginate-v2": "^1.3.9",
     "multer": "^1.4.2",
     "node-fetch": "^2.6.0",
     "nodemon": "^2.0.2",

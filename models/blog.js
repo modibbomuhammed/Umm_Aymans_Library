@@ -1,5 +1,5 @@
 const mongoose 			= require('mongoose'),
-	  mongoosePaginate	= require('mongoose-paginate')
+	  mongoosePaginate 	= require('mongoose-paginate-v2');
 
 var commentSchema = new mongoose.Schema({
 	name: String,
@@ -22,6 +22,7 @@ var blogSchema = new mongoose.Schema({
 	},
 	date: { type: Date, default: Date.now() }
 })
+
 
 blogSchema.plugin(mongoosePaginate)
 

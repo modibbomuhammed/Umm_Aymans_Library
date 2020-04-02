@@ -1,0 +1,14 @@
+h1 {
+	text-transform: uppercase;
+    text-align: center;
+    padding-top: 50px;
+}
+
+form{
+	width: 50%;
+	margin: 0 auto;
+}
+
+#deleteform{
+	display: inline;
+}

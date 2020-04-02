@@ -22,10 +22,11 @@ const express 			= require('express'),
 require('dotenv').config();
 app.set('view engine', 'ejs')
 app.use(bodyParser.urlencoded({extended: true}))
-app.use(express.static('./public'));
+// app.use(express.static('./public'));
+app.use(express.static(__dirname + '/public'))
 
-
-mongoose.connect('mongodb://localhost/ummaymanslibrary:',{
+mongoose.set('useCreateIndex', true);
+mongoose.connect(process.env.DATABASE, {
 	useNewUrlParser: true,
 	useUnifiedTopology: true
 })
@@ -41,6 +42,9 @@ app.use(expressSession({
 
 app.use(flash());
 app.use(methodOverride('_method'));
+
+// app.use(express.static(path.join(__dirname, 'public')));
+
 // passport config
 app.use(passport.initialize());
 app.use(passport.session());
@@ -55,6 +59,7 @@ app.use(function(req,res,next){
 	res.locals.currentUser 	= req.user;
 	res.locals.success 		= req.flash("success")
 	res.locals.error		= req.flash("error")
+	res.locals.title		= "Umm-Ayman's Library"
 	next();
 })
 
@@ -113,19 +118,13 @@ function checkFileTypes(file, cb){
 
 // landing page
 app.get("/", function(req,res){
-	res.send("Welcome to the home page")
+	res.redirect('/blogs')
 })
 
 // blogs routes
 app.get('/blogs', async (req,res) => {
 	let dbQuery = {}
 	if(req.query.search){
-	// 	let books 
-	// 	let book = req.query.search.replace(/ /g,"+");
-	// 	fetch(`https://openlibrary.org/search.json?q=${book}`)
-	// 	.then(data => data.json())
-	// 	.then(data => {
-	// 		books = data.docs
 		let { search } = req.query
 		 search = new RegExp(escapeRegExp(search), 'gi');
 		 dbQuery = {
@@ -139,18 +138,13 @@ app.get('/blogs', async (req,res) => {
 		const delimiter = req.query.search ? '&' : '?';
 	
 		res.locals.paginateUrl = req.originalUrl.replace(/(\?|\&)page=\d+/g, '') + `${delimiter}page=`;
-	// 	return res.render('search', { books })
-			
-	// 	// fetch('http://openlibrary.org/search.json?q=' + req.query.search)
-	// 	// .then(resp => resp.json())
-	// }
-	
+
 	let blogs = await Blogs.paginate(dbQuery, {
 		page: Number(req.query.page) || 1,
 		limit: 10,
 		sort: '-_id'
 	})
-	// eval(require('locus'))
+	eval(require('locus'))
 	res.render("index", { blogs })
 })
 
@@ -186,16 +180,14 @@ app.post("/blogs", isLoggedIn, upload, async (req,res)=> {
 	blog.image.public_id = result.public_id
 	blog.author = req.user._id
 	
-	let blogs = await Blogs.create(blog)	
+	let blogs = await Blogs.create(blog)
+	req.flash("success","Congratulation you succesfully created a blog post")
 	res.redirect("/blogs")
 	
 })
 
 app.get("/blogs/:blogid", async (req,res)=> {
 	let blog = await Blogs.findById(req.params.blogid)
-	//.populate("comments").exec()
-	// console.log(blog);
-	
 	res.render('show', {blog: blog})
 })
 
@@ -216,7 +208,17 @@ app.put('/blogs/:blogid', isLoggedIn, adminChecker, upload, async (req,res) => {
 		blog.title = title
 		blog.content = content
 		await blog.save()
+		req.flash("success","You have updated the blog")
 		res.redirect('/blogs/' + blog.id)
+})
+
+app.delete('/blogs/:blogid', isLoggedIn, adminChecker, async (req,res) => {
+	let blog = await Blogs.findById(req.params.blogid)
+	await cloudinary.uploader.destroy(blog.image.public_id)
+	blog.remove();
+	req.flash("success","You have successfully deleted the blog!!")
+	
+	res.redirect('/blogs')
 })
 
 // comments route
@@ -228,6 +230,7 @@ app.post('/blogs/:blogid', async (req,res) =>{
 	// await foundblog.comments.push(newcomment);
 	await foundblog.comments.push(comment);
 	await foundblog.save();
+	req.flash("success","You have posted a comment")
 	res.redirect("/blogs/" + req.params.blogid);
 })
 
@@ -235,7 +238,7 @@ app.post('/blogs/:blogid', async (req,res) =>{
 // auth routes 
 
 app.get('/register',(req,res) =>{
-	res.render('index/register')
+	res.render('index/register', { title: 'register'})
 })
 
 
@@ -258,7 +261,7 @@ app.post('/register', (req,res) =>{
 })
 
 app.get('/login', (req,res)=> {
-	res.render('index/login');
+	res.render('index/login', {title: 'login'});
 })
 
 app.post('/login', passport.authenticate('local', {
@@ -272,6 +275,10 @@ app.post('/login', passport.authenticate('local', {
 app.get('/logout', (req,res) => {
 	req.logout();
 	res.redirect('/blogs');
+})
+
+app.get('*', function(req,res){
+	res.send("This Page Isn't ready yet")
 })
 
 
